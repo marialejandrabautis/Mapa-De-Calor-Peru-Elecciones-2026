@@ -1,0 +1,131 @@
+```{r}
+
+```
+
+---
+title: "MapaDeCalor_Ale"
+format: html
+editor: visual
+---
+
+## Mapa de Calor
+
+Paquetes por instalar
+
+```{r}
+install.packages("sf")
+library(purrr)
+library(tidyverse)
+library(ggplot2)
+library(ggrepel)
+library(sf)
+```
+
+```{r}
+library(sf)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{dirmapas <- "C:/Users/USER/Desktop/Rstudio/Bioestadística/Mapa de calor"}
+setwd(dirmapas)
+peru_d <- st_read("DEPARTAMENTOS_inei_geogpsperu_suyopomalia.shp") 
+```
+
+```{r}
+peru_d
+```
+
+```{r}
+library(ggplot2)
+ggplot(data = peru_d) +
+  geom_sf()
+```
+
+```{r}
+unique(peru_d$NOMBDEP)
+```
+
+```{r}
+datos <- read.csv("elecciones2026.csv", sep = ";", dec = ".")
+```
+
+```{r}
+head(datos)
+```
+
+```{r}
+# sacar el ganador de cada departamento
+datos$ganador <- apply(datos[,2:5], 1, function(x) {
+  colnames(datos[,2:5])[which.max(x)]
+})
+```
+
+```{r}
+library(dplyr)
+
+mapa_final <- left_join(peru_d, datos,
+                       by = c("NOMBDEP" = "DEPARTAMENTO"))
+```
+
+```{r}
+head(mapa_final)
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(mapa_final) +
+  geom_sf(aes(fill = ganador), color = "black", size = 0.2) +
+  scale_fill_manual(values = c(
+    "FUERZA.POPULAR" = "orange",
+    "JUNTOS.POR.EL.PERU" = "green",
+    "RENOVACION.POPULAR" = "blue",
+    "PARTIDO.DEL.BUEN.GOBIERNO" = "yellow"
+  )) +
+  labs(title = "Mapa Electoral del Perú 2026",
+       fill = "Partido ganador") +
+  theme_minimal()
+```
+
+```{r}
+install.packages("ggrepel")
+```
+
+```{r}
+library(sf)
+library(ggplot2)
+library(ggrepel)
+
+# Crear puntos dentro de cada departamento
+puntos <- st_point_on_surface(mapa_final)
+
+# Sacar coordenadas X e Y para las etiquetas
+coords <- st_coordinates(puntos)
+puntos$X <- coords[,1]
+puntos$Y <- coords[,2]
+
+ggplot(mapa_final) +
+  geom_sf(aes(fill = ganador), color = "black", size = 0.2) +
+  geom_text_repel(
+    data = puntos,
+    aes(x = X, y = Y, label = NOMBDEP),
+    size = 2,
+    max.overlaps = 25
+  ) +
+  scale_fill_manual(values = c(
+    "FUERZA.POPULAR" = "#E69F00",
+    "JUNTOS.POR.EL.PERU" = "#009E73",
+    "RENOVACION.POPULAR" = "#56B4E9",
+    "PARTIDO.DEL.BUEN.GOBIERNO" = "#F0E442"
+  )) +
+  labs(title = "Mapa Electoral del Perú 2026",
+       fill = "Partido ganador") +
+  theme_minimal()
+```
