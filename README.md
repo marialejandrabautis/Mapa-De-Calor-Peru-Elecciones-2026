@@ -2,9 +2,9 @@
 Mapa de calor del Perú basado en resultados electorales por departamento usando R, sf y ggplot2.
 ## Objetivo
 El objetivo de este trabajo es elaborar un mapa del Perú por departamentos utilizando datos de las elecciones 2026 y un archivo shapefile.
-## 📊 Datos utilizados
+## Datos utilizados
 Se emplearon datos de resultados electorales por departamento de 4 partidos políticos en especial: Fuerza popular, Juntos por el Perú, Partido del Buen Gobierno y Renovación popular (con fines académicos) .
-## 🗺️ Metodología
+## Metodología
 
 ### 1. Cargar librerías
 ```r
